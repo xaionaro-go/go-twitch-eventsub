@@ -97,7 +97,7 @@ func TestNoWelcome(t *testing.T) {
 	t.Parallel()
 
 	client := twitch.NewClientWithUrl("")
-	err := client.Connect()
+	err := client.Connect(nil)
 	assert.ErrorIs(t, err, twitch.ErrNilOnWelcome)
 }
 
@@ -112,7 +112,7 @@ func TestOnClose(t *testing.T) {
 		}()
 	})
 
-	err := client.Connect()
+	err := client.Connect(nil)
 	assert.NoError(t, err)
 }
 
@@ -192,7 +192,7 @@ func TestReconnectEvent(t *testing.T) {
 	var revokeOccured bool
 	client.OnRevoke(func(message twitch.RevokeMessage) { revokeOccured = true })
 
-	err = client.Connect()
+	err = client.Connect(nil)
 	assert.NoError(t, err)
 	assert.Equal(t, reconnectUrl, client.Address, "addresses should match")
 	assert.True(t, revokeOccured, "revoke did not fire")

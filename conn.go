@@ -144,11 +144,16 @@ func NewClientWithUrl(url string) *Client {
 	}
 }
 
-func (c *Client) Connect() error {
-	return c.ConnectWithContext(context.Background())
+func (c *Client) Connect(
+	onReadError func(context.Context, error),
+) error {
+	return c.ConnectWithContext(context.Background(), onReadError)
 }
 
-func (c *Client) ConnectWithContext(ctx context.Context) error {
+func (c *Client) ConnectWithContext(
+	ctx context.Context,
+	onReadError func(context.Context, error),
+) error {
 	if c.onWelcome == nil {
 		return ErrNilOnWelcome
 	}
@@ -161,11 +166,19 @@ func (c *Client) ConnectWithContext(ctx context.Context) error {
 	c.ws = ws
 	c.connected = true
 
+	go c.readLoop(ctx, onReadError)
+	return nil
+}
+
+func (c *Client) readLoop(
+	ctx context.Context,
+	onReadError func(context.Context, error),
+) {
 	for {
 		_, data, err := c.ws.Read(ctx)
 		if err != nil {
 			if errors.Is(err, context.Canceled) {
-				return nil
+				return
 			}
 
 			if websocket.CloseStatus(err) == websocket.StatusNormalClosure {
@@ -174,10 +187,15 @@ func (c *Client) ConnectWithContext(ctx context.Context) error {
 					<-c.reconnected
 					continue
 				}
-				return nil
+				return
 			}
 
-			return fmt.Errorf("could not read message: %w", err)
+			if onReadError == nil {
+				c.onError(err)
+				return
+			}
+			onReadError(ctx, err)
+			return
 		}
 
 		err = c.handleMessage(data)

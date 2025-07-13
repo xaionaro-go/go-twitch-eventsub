@@ -218,7 +218,7 @@ func newClientWithWelcome(t *testing.T, version string, event twitch.EventSubscr
 }
 
 func connect(t *testing.T, client *twitch.Client) {
-	err := client.Connect()
+	err := client.Connect(nil)
 	if err != nil {
 		t.Errorf("could not connect client: %v", err)
 	}
