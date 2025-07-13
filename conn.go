@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"sync"
 
 	"github.com/coder/websocket"
 )
@@ -45,10 +46,11 @@ func callFuncWithMsg[T any](f func(T, NotificationMessage), v T, msg Notificatio
 }
 
 type Client struct {
-	Address   string
-	ws        *websocket.Conn
-	connected bool
-	ctx       context.Context
+	Address    string
+	ws         *websocket.Conn
+	connected  bool
+	ctx        context.Context
+	readLoopWG sync.WaitGroup
 
 	reconnecting bool
 	reconnected  chan struct{}
@@ -172,8 +174,16 @@ func (c *Client) ConnectWithContext(
 	c.ws = ws
 	c.connected = true
 
-	go c.readLoop(ctx, onReadError)
+	c.readLoopWG.Add(1)
+	go func() {
+		defer c.readLoopWG.Done()
+		c.readLoop(ctx, onReadError)
+	}()
 	return nil
+}
+
+func (c *Client) Wait() {
+	c.readLoopWG.Wait()
 }
 
 func (c *Client) readLoop(

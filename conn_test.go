@@ -183,18 +183,19 @@ func TestReconnectEvent(t *testing.T) {
 
 	client := newClient(t, genReconnectGen(reconnectUrl, revokeGen))
 
-	var keepAliveOccured bool
+	var keepAliveOccurred bool
 	client.OnKeepAlive(func(message twitch.KeepAliveMessage) {
-		keepAliveOccured = true
+		keepAliveOccurred = true
 		client.Close()
 	})
 
-	var revokeOccured bool
-	client.OnRevoke(func(message twitch.RevokeMessage) { revokeOccured = true })
+	var revokeOccurred bool
+	client.OnRevoke(func(message twitch.RevokeMessage) { revokeOccurred = true })
 
 	err = client.Connect(nil)
+	client.Wait()
 	assert.NoError(t, err)
 	assert.Equal(t, reconnectUrl, client.Address, "addresses should match")
-	assert.True(t, revokeOccured, "revoke did not fire")
-	assert.True(t, keepAliveOccured, "keepalive did not fire")
+	assert.True(t, revokeOccurred, "revoke did not fire")
+	assert.True(t, keepAliveOccurred, "keepalive did not fire")
 }
