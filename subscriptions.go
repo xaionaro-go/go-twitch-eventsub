@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"maps"
 	"net/http"
 )
 
@@ -111,7 +112,7 @@ var (
 
 	SubConduitShardDisabled EventSubscription = "conduit.shard.disabled"
 
-	subMetadata = map[EventSubscription]subscriptionMetadata{
+	subMetadata = map[EventSubscription]SubscriptionMetadata{
 		SubChannelUpdate: {
 			Version:  "2",
 			EventGen: zeroPtrGen[EventChannelUpdate](),
@@ -407,9 +408,13 @@ var (
 	}
 )
 
-type subscriptionMetadata struct {
+func SubMetadata() map[EventSubscription]SubscriptionMetadata {
+	return maps.Clone(subMetadata)
+}
+
+type SubscriptionMetadata struct {
 	Version  string
-	EventGen func() interface{}
+	EventGen func() any
 }
 
 type SubscribeRequest struct {
