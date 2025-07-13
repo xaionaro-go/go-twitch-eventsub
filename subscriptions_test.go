@@ -23,7 +23,7 @@ func TestEventVersion(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.Name, func(t *testing.T) {
-			assertEventOccured(t, func(ch chan struct{}) {
+			assertEventOccurred(t, func(ch chan struct{}) {
 				listener, err := net.Listen("tcp", "127.0.0.1:0")
 				if err != nil {
 					t.Error(err)

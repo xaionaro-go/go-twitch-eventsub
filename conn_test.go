@@ -81,7 +81,7 @@ func genReconnectGen(url string, gens ...messageDataGenerator) messageDataGenera
 	}
 }
 
-func assertEventOccured(t *testing.T, f func(ch chan struct{})) {
+func assertEventOccurred(t *testing.T, f func(ch chan struct{})) {
 	ch := make(chan struct{})
 
 	f(ch)
@@ -119,7 +119,7 @@ func TestOnClose(t *testing.T) {
 func TestOnKeepAlive(t *testing.T) {
 	t.Parallel()
 
-	assertEventOccured(t, func(ch chan struct{}) {
+	assertEventOccurred(t, func(ch chan struct{}) {
 		client := newClient(t, keepAliveGen)
 		client.OnKeepAlive(func(message twitch.KeepAliveMessage) {
 			close(ch)
@@ -132,7 +132,7 @@ func TestOnKeepAlive(t *testing.T) {
 func TestOnRevoke(t *testing.T) {
 	t.Parallel()
 
-	assertEventOccured(t, func(ch chan struct{}) {
+	assertEventOccurred(t, func(ch chan struct{}) {
 		client := newClient(t, revokeGen)
 		client.OnRevoke(func(message twitch.RevokeMessage) {
 			close(ch)
@@ -145,7 +145,7 @@ func TestOnRevoke(t *testing.T) {
 func TestOnError(t *testing.T) {
 	t.Parallel()
 
-	assertEventOccured(t, func(ch chan struct{}) {
+	assertEventOccurred(t, func(ch chan struct{}) {
 		client := newClient(t, func() ([][]byte, bool, error) {
 			return [][]byte{[]byte(`{}`)}, false, nil
 		})
@@ -160,7 +160,7 @@ func TestOnError(t *testing.T) {
 func TestInvalidJson(t *testing.T) {
 	t.Parallel()
 
-	assertEventOccured(t, func(ch chan struct{}) {
+	assertEventOccurred(t, func(ch chan struct{}) {
 		client := newClient(t, func() ([][]byte, bool, error) {
 			return [][]byte{[]byte(`{`)}, false, nil
 		})

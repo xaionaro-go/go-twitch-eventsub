@@ -38,6 +38,12 @@ func callFunc[T any](f func(T), v T) {
 	}
 }
 
+func callFuncWithMsg[T any](f func(T, NotificationMessage), v T, msg NotificationMessage) {
+	if f != nil {
+		go f(v, msg)
+	}
+}
+
 type Client struct {
 	Address   string
 	ws        *websocket.Conn
@@ -57,79 +63,79 @@ type Client struct {
 
 	// Events
 	onRawEvent                                              func(event string, metadata MessageMetadata, subscription PayloadSubscription)
-	onEventChannelUpdate                                    func(event EventChannelUpdate)
-	onEventChannelFollow                                    func(event EventChannelFollow)
-	onEventChannelSubscribe                                 func(event EventChannelSubscribe)
-	onEventChannelSubscriptionEnd                           func(event EventChannelSubscriptionEnd)
-	onEventChannelSubscriptionGift                          func(event EventChannelSubscriptionGift)
-	onEventChannelSubscriptionMessage                       func(event EventChannelSubscriptionMessage)
-	onEventChannelCheer                                     func(event EventChannelCheer)
-	onEventChannelRaid                                      func(event EventChannelRaid)
-	onEventChannelBan                                       func(event EventChannelBan)
-	onEventChannelUnban                                     func(event EventChannelUnban)
-	onEventChannelModeratorAdd                              func(event EventChannelModeratorAdd)
-	onEventChannelModeratorRemove                           func(event EventChannelModeratorRemove)
-	onEventChannelVIPAdd                                    func(event EventChannelVIPAdd)
-	onEventChannelVIPRemove                                 func(event EventChannelVIPRemove)
-	onEventChannelChannelPointsCustomRewardAdd              func(event EventChannelChannelPointsCustomRewardAdd)
-	onEventChannelChannelPointsCustomRewardUpdate           func(event EventChannelChannelPointsCustomRewardUpdate)
-	onEventChannelChannelPointsCustomRewardRemove           func(event EventChannelChannelPointsCustomRewardRemove)
-	onEventChannelChannelPointsCustomRewardRedemptionAdd    func(event EventChannelChannelPointsCustomRewardRedemptionAdd)
-	onEventChannelChannelPointsCustomRewardRedemptionUpdate func(event EventChannelChannelPointsCustomRewardRedemptionUpdate)
-	onEventChannelChannelPointsAutomaticRewardRedemptionAdd func(event EventChannelChannelPointsAutomaticRewardRedemptionAdd)
-	onEventChannelPollBegin                                 func(event EventChannelPollBegin)
-	onEventChannelPollProgress                              func(event EventChannelPollProgress)
-	onEventChannelPollEnd                                   func(event EventChannelPollEnd)
-	onEventChannelPredictionBegin                           func(event EventChannelPredictionBegin)
-	onEventChannelPredictionProgress                        func(event EventChannelPredictionProgress)
-	onEventChannelPredictionLock                            func(event EventChannelPredictionLock)
-	onEventChannelPredictionEnd                             func(event EventChannelPredictionEnd)
-	onEventDropEntitlementGrant                             func(event []EventDropEntitlementGrant)
-	onEventExtensionBitsTransactionCreate                   func(event EventExtensionBitsTransactionCreate)
-	onEventChannelGoalBegin                                 func(event EventChannelGoalBegin)
-	onEventChannelGoalProgress                              func(event EventChannelGoalProgress)
-	onEventChannelGoalEnd                                   func(event EventChannelGoalEnd)
-	onEventChannelHypeTrainBegin                            func(event EventChannelHypeTrainBegin)
-	onEventChannelHypeTrainProgress                         func(event EventChannelHypeTrainProgress)
-	onEventChannelHypeTrainEnd                              func(event EventChannelHypeTrainEnd)
-	onEventStreamOnline                                     func(event EventStreamOnline)
-	onEventStreamOffline                                    func(event EventStreamOffline)
-	onEventUserAuthorizationGrant                           func(event EventUserAuthorizationGrant)
-	onEventUserAuthorizationRevoke                          func(event EventUserAuthorizationRevoke)
-	onEventUserUpdate                                       func(event EventUserUpdate)
-	onEventChannelCharityCampaignDonate                     func(event EventChannelCharityCampaignDonate)
-	onEventChannelCharityCampaignProgress                   func(event EventChannelCharityCampaignProgress)
-	onEventChannelCharityCampaignStart                      func(event EventChannelCharityCampaignStart)
-	onEventChannelCharityCampaignStop                       func(event EventChannelCharityCampaignStop)
-	onEventChannelShieldModeBegin                           func(event EventChannelShieldModeBegin)
-	onEventChannelShieldModeEnd                             func(event EventChannelShieldModeEnd)
-	onEventChannelShoutoutCreate                            func(event EventChannelShoutoutCreate)
-	onEventChannelShoutoutReceive                           func(event EventChannelShoutoutReceive)
-	onEventChannelModerate                                  func(event EventChannelModerate)
-	onEventAutomodMessageHold                               func(event EventAutomodMessageHold)
-	onEventAutomodMessageUpdate                             func(event EventAutomodMessageUpdate)
-	onEventAutomodSettingsUpdate                            func(event EventAutomodSettingsUpdate)
-	onEventAutomodTermsUpdate                               func(event EventAutomodTermsUpdate)
-	onEventChannelChatUserMessageHold                       func(event EventChannelChatUserMessageHold)
-	onEventChannelChatUserMessageUpdate                     func(event EventChannelChatUserMessageUpdate)
-	onEventChannelChatClear                                 func(event EventChannelChatClear)
-	onEventChannelChatClearUserMessages                     func(event EventChannelChatClearUserMessages)
-	onEventChannelChatMessage                               func(event EventChannelChatMessage)
-	onEventChannelChatMessageDelete                         func(event EventChannelChatMessageDelete)
-	onEventChannelChatNotification                          func(event EventChannelChatNotification)
-	onEventChannelChatSettingsUpdate                        func(event EventChannelChatSettingsUpdate)
-	onEventChannelSuspiciousUserMessage                     func(event EventChannelSuspiciousUserMessage)
-	onEventChannelSuspiciousUserUpdate                      func(event EventChannelSuspiciousUserUpdate)
-	onEventChannelSharedChatBegin                           func(event EventChannelSharedChatBegin)
-	onEventChannelSharedChatUpdate                          func(event EventChannelSharedChatUpdate)
-	onEventChannelSharedChatEnd                             func(event EventChannelSharedChatEnd)
-	onEventUserWhisperMessage                               func(event EventUserWhisperMessage)
-	onEventChannelAdBreakBegin                              func(event EventChannelAdBreakBegin)
-	onEventChannelWarningAcknowledge                        func(event EventChannelWarningAcknowledge)
-	onEventChannelWarningSend                               func(event EventChannelWarningSend)
-	onEventChannelUnbanRequestCreate                        func(event EventChannelUnbanRequestCreate)
-	onEventChannelUnbanRequestResolve                       func(event EventChannelUnbanRequestResolve)
-	onEventConduitShardDisabled                             func(event EventConduitShardDisabled)
+	onEventChannelUpdate                                    func(event EventChannelUpdate, msg NotificationMessage)
+	onEventChannelFollow                                    func(event EventChannelFollow, msg NotificationMessage)
+	onEventChannelSubscribe                                 func(event EventChannelSubscribe, msg NotificationMessage)
+	onEventChannelSubscriptionEnd                           func(event EventChannelSubscriptionEnd, msg NotificationMessage)
+	onEventChannelSubscriptionGift                          func(event EventChannelSubscriptionGift, msg NotificationMessage)
+	onEventChannelSubscriptionMessage                       func(event EventChannelSubscriptionMessage, msg NotificationMessage)
+	onEventChannelCheer                                     func(event EventChannelCheer, msg NotificationMessage)
+	onEventChannelRaid                                      func(event EventChannelRaid, msg NotificationMessage)
+	onEventChannelBan                                       func(event EventChannelBan, msg NotificationMessage)
+	onEventChannelUnban                                     func(event EventChannelUnban, msg NotificationMessage)
+	onEventChannelModeratorAdd                              func(event EventChannelModeratorAdd, msg NotificationMessage)
+	onEventChannelModeratorRemove                           func(event EventChannelModeratorRemove, msg NotificationMessage)
+	onEventChannelVIPAdd                                    func(event EventChannelVIPAdd, msg NotificationMessage)
+	onEventChannelVIPRemove                                 func(event EventChannelVIPRemove, msg NotificationMessage)
+	onEventChannelChannelPointsCustomRewardAdd              func(event EventChannelChannelPointsCustomRewardAdd, msg NotificationMessage)
+	onEventChannelChannelPointsCustomRewardUpdate           func(event EventChannelChannelPointsCustomRewardUpdate, msg NotificationMessage)
+	onEventChannelChannelPointsCustomRewardRemove           func(event EventChannelChannelPointsCustomRewardRemove, msg NotificationMessage)
+	onEventChannelChannelPointsCustomRewardRedemptionAdd    func(event EventChannelChannelPointsCustomRewardRedemptionAdd, msg NotificationMessage)
+	onEventChannelChannelPointsCustomRewardRedemptionUpdate func(event EventChannelChannelPointsCustomRewardRedemptionUpdate, msg NotificationMessage)
+	onEventChannelChannelPointsAutomaticRewardRedemptionAdd func(event EventChannelChannelPointsAutomaticRewardRedemptionAdd, msg NotificationMessage)
+	onEventChannelPollBegin                                 func(event EventChannelPollBegin, msg NotificationMessage)
+	onEventChannelPollProgress                              func(event EventChannelPollProgress, msg NotificationMessage)
+	onEventChannelPollEnd                                   func(event EventChannelPollEnd, msg NotificationMessage)
+	onEventChannelPredictionBegin                           func(event EventChannelPredictionBegin, msg NotificationMessage)
+	onEventChannelPredictionProgress                        func(event EventChannelPredictionProgress, msg NotificationMessage)
+	onEventChannelPredictionLock                            func(event EventChannelPredictionLock, msg NotificationMessage)
+	onEventChannelPredictionEnd                             func(event EventChannelPredictionEnd, msg NotificationMessage)
+	onEventDropEntitlementGrant                             func(event []EventDropEntitlementGrant, msg NotificationMessage)
+	onEventExtensionBitsTransactionCreate                   func(event EventExtensionBitsTransactionCreate, msg NotificationMessage)
+	onEventChannelGoalBegin                                 func(event EventChannelGoalBegin, msg NotificationMessage)
+	onEventChannelGoalProgress                              func(event EventChannelGoalProgress, msg NotificationMessage)
+	onEventChannelGoalEnd                                   func(event EventChannelGoalEnd, msg NotificationMessage)
+	onEventChannelHypeTrainBegin                            func(event EventChannelHypeTrainBegin, msg NotificationMessage)
+	onEventChannelHypeTrainProgress                         func(event EventChannelHypeTrainProgress, msg NotificationMessage)
+	onEventChannelHypeTrainEnd                              func(event EventChannelHypeTrainEnd, msg NotificationMessage)
+	onEventStreamOnline                                     func(event EventStreamOnline, msg NotificationMessage)
+	onEventStreamOffline                                    func(event EventStreamOffline, msg NotificationMessage)
+	onEventUserAuthorizationGrant                           func(event EventUserAuthorizationGrant, msg NotificationMessage)
+	onEventUserAuthorizationRevoke                          func(event EventUserAuthorizationRevoke, msg NotificationMessage)
+	onEventUserUpdate                                       func(event EventUserUpdate, msg NotificationMessage)
+	onEventChannelCharityCampaignDonate                     func(event EventChannelCharityCampaignDonate, msg NotificationMessage)
+	onEventChannelCharityCampaignProgress                   func(event EventChannelCharityCampaignProgress, msg NotificationMessage)
+	onEventChannelCharityCampaignStart                      func(event EventChannelCharityCampaignStart, msg NotificationMessage)
+	onEventChannelCharityCampaignStop                       func(event EventChannelCharityCampaignStop, msg NotificationMessage)
+	onEventChannelShieldModeBegin                           func(event EventChannelShieldModeBegin, msg NotificationMessage)
+	onEventChannelShieldModeEnd                             func(event EventChannelShieldModeEnd, msg NotificationMessage)
+	onEventChannelShoutoutCreate                            func(event EventChannelShoutoutCreate, msg NotificationMessage)
+	onEventChannelShoutoutReceive                           func(event EventChannelShoutoutReceive, msg NotificationMessage)
+	onEventChannelModerate                                  func(event EventChannelModerate, msg NotificationMessage)
+	onEventAutomodMessageHold                               func(event EventAutomodMessageHold, msg NotificationMessage)
+	onEventAutomodMessageUpdate                             func(event EventAutomodMessageUpdate, msg NotificationMessage)
+	onEventAutomodSettingsUpdate                            func(event EventAutomodSettingsUpdate, msg NotificationMessage)
+	onEventAutomodTermsUpdate                               func(event EventAutomodTermsUpdate, msg NotificationMessage)
+	onEventChannelChatUserMessageHold                       func(event EventChannelChatUserMessageHold, msg NotificationMessage)
+	onEventChannelChatUserMessageUpdate                     func(event EventChannelChatUserMessageUpdate, msg NotificationMessage)
+	onEventChannelChatClear                                 func(event EventChannelChatClear, msg NotificationMessage)
+	onEventChannelChatClearUserMessages                     func(event EventChannelChatClearUserMessages, msg NotificationMessage)
+	onEventChannelChatMessage                               func(event EventChannelChatMessage, msg NotificationMessage)
+	onEventChannelChatMessageDelete                         func(event EventChannelChatMessageDelete, msg NotificationMessage)
+	onEventChannelChatNotification                          func(event EventChannelChatNotification, msg NotificationMessage)
+	onEventChannelChatSettingsUpdate                        func(event EventChannelChatSettingsUpdate, msg NotificationMessage)
+	onEventChannelSuspiciousUserMessage                     func(event EventChannelSuspiciousUserMessage, msg NotificationMessage)
+	onEventChannelSuspiciousUserUpdate                      func(event EventChannelSuspiciousUserUpdate, msg NotificationMessage)
+	onEventChannelSharedChatBegin                           func(event EventChannelSharedChatBegin, msg NotificationMessage)
+	onEventChannelSharedChatUpdate                          func(event EventChannelSharedChatUpdate, msg NotificationMessage)
+	onEventChannelSharedChatEnd                             func(event EventChannelSharedChatEnd, msg NotificationMessage)
+	onEventUserWhisperMessage                               func(event EventUserWhisperMessage, msg NotificationMessage)
+	onEventChannelAdBreakBegin                              func(event EventChannelAdBreakBegin, msg NotificationMessage)
+	onEventChannelWarningAcknowledge                        func(event EventChannelWarningAcknowledge, msg NotificationMessage)
+	onEventChannelWarningSend                               func(event EventChannelWarningSend, msg NotificationMessage)
+	onEventChannelUnbanRequestCreate                        func(event EventChannelUnbanRequestCreate, msg NotificationMessage)
+	onEventChannelUnbanRequestResolve                       func(event EventChannelUnbanRequestResolve, msg NotificationMessage)
+	onEventConduitShardDisabled                             func(event EventConduitShardDisabled, msg NotificationMessage)
 }
 
 func NewClient() *Client {
@@ -326,151 +332,151 @@ func (c *Client) handleNotification(message NotificationMessage) error {
 
 	switch event := newEvent.(type) {
 	case *EventChannelUpdate:
-		callFunc(c.onEventChannelUpdate, *event)
+		callFuncWithMsg(c.onEventChannelUpdate, *event, message)
 	case *EventChannelFollow:
-		callFunc(c.onEventChannelFollow, *event)
+		callFuncWithMsg(c.onEventChannelFollow, *event, message)
 	case *EventChannelSubscribe:
-		callFunc(c.onEventChannelSubscribe, *event)
+		callFuncWithMsg(c.onEventChannelSubscribe, *event, message)
 	case *EventChannelSubscriptionEnd:
-		callFunc(c.onEventChannelSubscriptionEnd, *event)
+		callFuncWithMsg(c.onEventChannelSubscriptionEnd, *event, message)
 	case *EventChannelSubscriptionGift:
-		callFunc(c.onEventChannelSubscriptionGift, *event)
+		callFuncWithMsg(c.onEventChannelSubscriptionGift, *event, message)
 	case *EventChannelSubscriptionMessage:
-		callFunc(c.onEventChannelSubscriptionMessage, *event)
+		callFuncWithMsg(c.onEventChannelSubscriptionMessage, *event, message)
 	case *EventChannelCheer:
-		callFunc(c.onEventChannelCheer, *event)
+		callFuncWithMsg(c.onEventChannelCheer, *event, message)
 	case *EventChannelRaid:
-		callFunc(c.onEventChannelRaid, *event)
+		callFuncWithMsg(c.onEventChannelRaid, *event, message)
 	case *EventChannelBan:
-		callFunc(c.onEventChannelBan, *event)
+		callFuncWithMsg(c.onEventChannelBan, *event, message)
 	case *EventChannelUnban:
-		callFunc(c.onEventChannelUnban, *event)
+		callFuncWithMsg(c.onEventChannelUnban, *event, message)
 	case *EventChannelModeratorAdd:
-		callFunc(c.onEventChannelModeratorAdd, *event)
+		callFuncWithMsg(c.onEventChannelModeratorAdd, *event, message)
 	case *EventChannelModeratorRemove:
-		callFunc(c.onEventChannelModeratorRemove, *event)
+		callFuncWithMsg(c.onEventChannelModeratorRemove, *event, message)
 	case *EventChannelVIPAdd:
-		callFunc(c.onEventChannelVIPAdd, *event)
+		callFuncWithMsg(c.onEventChannelVIPAdd, *event, message)
 	case *EventChannelVIPRemove:
-		callFunc(c.onEventChannelVIPRemove, *event)
+		callFuncWithMsg(c.onEventChannelVIPRemove, *event, message)
 	case *EventChannelChannelPointsCustomRewardAdd:
-		callFunc(c.onEventChannelChannelPointsCustomRewardAdd, *event)
+		callFuncWithMsg(c.onEventChannelChannelPointsCustomRewardAdd, *event, message)
 	case *EventChannelChannelPointsCustomRewardUpdate:
-		callFunc(c.onEventChannelChannelPointsCustomRewardUpdate, *event)
+		callFuncWithMsg(c.onEventChannelChannelPointsCustomRewardUpdate, *event, message)
 	case *EventChannelChannelPointsCustomRewardRemove:
-		callFunc(c.onEventChannelChannelPointsCustomRewardRemove, *event)
+		callFuncWithMsg(c.onEventChannelChannelPointsCustomRewardRemove, *event, message)
 	case *EventChannelChannelPointsCustomRewardRedemptionAdd:
-		callFunc(c.onEventChannelChannelPointsCustomRewardRedemptionAdd, *event)
+		callFuncWithMsg(c.onEventChannelChannelPointsCustomRewardRedemptionAdd, *event, message)
 	case *EventChannelChannelPointsCustomRewardRedemptionUpdate:
-		callFunc(c.onEventChannelChannelPointsCustomRewardRedemptionUpdate, *event)
+		callFuncWithMsg(c.onEventChannelChannelPointsCustomRewardRedemptionUpdate, *event, message)
 	case *EventChannelChannelPointsAutomaticRewardRedemptionAdd:
-		callFunc(c.onEventChannelChannelPointsAutomaticRewardRedemptionAdd, *event)
+		callFuncWithMsg(c.onEventChannelChannelPointsAutomaticRewardRedemptionAdd, *event, message)
 	case *EventChannelPollBegin:
-		callFunc(c.onEventChannelPollBegin, *event)
+		callFuncWithMsg(c.onEventChannelPollBegin, *event, message)
 	case *EventChannelPollProgress:
-		callFunc(c.onEventChannelPollProgress, *event)
+		callFuncWithMsg(c.onEventChannelPollProgress, *event, message)
 	case *EventChannelPollEnd:
-		callFunc(c.onEventChannelPollEnd, *event)
+		callFuncWithMsg(c.onEventChannelPollEnd, *event, message)
 	case *EventChannelPredictionBegin:
-		callFunc(c.onEventChannelPredictionBegin, *event)
+		callFuncWithMsg(c.onEventChannelPredictionBegin, *event, message)
 	case *EventChannelPredictionProgress:
-		callFunc(c.onEventChannelPredictionProgress, *event)
+		callFuncWithMsg(c.onEventChannelPredictionProgress, *event, message)
 	case *EventChannelPredictionLock:
-		callFunc(c.onEventChannelPredictionLock, *event)
+		callFuncWithMsg(c.onEventChannelPredictionLock, *event, message)
 	case *EventChannelPredictionEnd:
-		callFunc(c.onEventChannelPredictionEnd, *event)
+		callFuncWithMsg(c.onEventChannelPredictionEnd, *event, message)
 	case *[]EventDropEntitlementGrant:
-		callFunc(c.onEventDropEntitlementGrant, *event)
+		callFuncWithMsg(c.onEventDropEntitlementGrant, *event, message)
 	case *EventExtensionBitsTransactionCreate:
-		callFunc(c.onEventExtensionBitsTransactionCreate, *event)
+		callFuncWithMsg(c.onEventExtensionBitsTransactionCreate, *event, message)
 	case *EventChannelGoalBegin:
-		callFunc(c.onEventChannelGoalBegin, *event)
+		callFuncWithMsg(c.onEventChannelGoalBegin, *event, message)
 	case *EventChannelGoalProgress:
-		callFunc(c.onEventChannelGoalProgress, *event)
+		callFuncWithMsg(c.onEventChannelGoalProgress, *event, message)
 	case *EventChannelGoalEnd:
-		callFunc(c.onEventChannelGoalEnd, *event)
+		callFuncWithMsg(c.onEventChannelGoalEnd, *event, message)
 	case *EventChannelHypeTrainBegin:
-		callFunc(c.onEventChannelHypeTrainBegin, *event)
+		callFuncWithMsg(c.onEventChannelHypeTrainBegin, *event, message)
 	case *EventChannelHypeTrainProgress:
-		callFunc(c.onEventChannelHypeTrainProgress, *event)
+		callFuncWithMsg(c.onEventChannelHypeTrainProgress, *event, message)
 	case *EventChannelHypeTrainEnd:
-		callFunc(c.onEventChannelHypeTrainEnd, *event)
+		callFuncWithMsg(c.onEventChannelHypeTrainEnd, *event, message)
 	case *EventStreamOnline:
-		callFunc(c.onEventStreamOnline, *event)
+		callFuncWithMsg(c.onEventStreamOnline, *event, message)
 	case *EventStreamOffline:
-		callFunc(c.onEventStreamOffline, *event)
+		callFuncWithMsg(c.onEventStreamOffline, *event, message)
 	case *EventUserAuthorizationGrant:
-		callFunc(c.onEventUserAuthorizationGrant, *event)
+		callFuncWithMsg(c.onEventUserAuthorizationGrant, *event, message)
 	case *EventUserAuthorizationRevoke:
-		callFunc(c.onEventUserAuthorizationRevoke, *event)
+		callFuncWithMsg(c.onEventUserAuthorizationRevoke, *event, message)
 	case *EventUserUpdate:
-		callFunc(c.onEventUserUpdate, *event)
+		callFuncWithMsg(c.onEventUserUpdate, *event, message)
 	case *EventChannelCharityCampaignDonate:
-		callFunc(c.onEventChannelCharityCampaignDonate, *event)
+		callFuncWithMsg(c.onEventChannelCharityCampaignDonate, *event, message)
 	case *EventChannelCharityCampaignProgress:
-		callFunc(c.onEventChannelCharityCampaignProgress, *event)
+		callFuncWithMsg(c.onEventChannelCharityCampaignProgress, *event, message)
 	case *EventChannelCharityCampaignStart:
-		callFunc(c.onEventChannelCharityCampaignStart, *event)
+		callFuncWithMsg(c.onEventChannelCharityCampaignStart, *event, message)
 	case *EventChannelCharityCampaignStop:
-		callFunc(c.onEventChannelCharityCampaignStop, *event)
+		callFuncWithMsg(c.onEventChannelCharityCampaignStop, *event, message)
 	case *EventChannelShieldModeBegin:
-		callFunc(c.onEventChannelShieldModeBegin, *event)
+		callFuncWithMsg(c.onEventChannelShieldModeBegin, *event, message)
 	case *EventChannelShieldModeEnd:
-		callFunc(c.onEventChannelShieldModeEnd, *event)
+		callFuncWithMsg(c.onEventChannelShieldModeEnd, *event, message)
 	case *EventChannelShoutoutCreate:
-		callFunc(c.onEventChannelShoutoutCreate, *event)
+		callFuncWithMsg(c.onEventChannelShoutoutCreate, *event, message)
 	case *EventChannelShoutoutReceive:
-		callFunc(c.onEventChannelShoutoutReceive, *event)
+		callFuncWithMsg(c.onEventChannelShoutoutReceive, *event, message)
 	case *EventChannelModerate:
-		callFunc(c.onEventChannelModerate, *event)
+		callFuncWithMsg(c.onEventChannelModerate, *event, message)
 	case *EventAutomodMessageHold:
-		callFunc(c.onEventAutomodMessageHold, *event)
+		callFuncWithMsg(c.onEventAutomodMessageHold, *event, message)
 	case *EventAutomodMessageUpdate:
-		callFunc(c.onEventAutomodMessageUpdate, *event)
+		callFuncWithMsg(c.onEventAutomodMessageUpdate, *event, message)
 	case *EventAutomodSettingsUpdate:
-		callFunc(c.onEventAutomodSettingsUpdate, *event)
+		callFuncWithMsg(c.onEventAutomodSettingsUpdate, *event, message)
 	case *EventAutomodTermsUpdate:
-		callFunc(c.onEventAutomodTermsUpdate, *event)
+		callFuncWithMsg(c.onEventAutomodTermsUpdate, *event, message)
 	case *EventChannelChatUserMessageHold:
-		callFunc(c.onEventChannelChatUserMessageHold, *event)
+		callFuncWithMsg(c.onEventChannelChatUserMessageHold, *event, message)
 	case *EventChannelChatUserMessageUpdate:
-		callFunc(c.onEventChannelChatUserMessageUpdate, *event)
+		callFuncWithMsg(c.onEventChannelChatUserMessageUpdate, *event, message)
 	case *EventChannelChatClear:
-		callFunc(c.onEventChannelChatClear, *event)
+		callFuncWithMsg(c.onEventChannelChatClear, *event, message)
 	case *EventChannelChatClearUserMessages:
-		callFunc(c.onEventChannelChatClearUserMessages, *event)
+		callFuncWithMsg(c.onEventChannelChatClearUserMessages, *event, message)
 	case *EventChannelChatMessage:
-		callFunc(c.onEventChannelChatMessage, *event)
+		callFuncWithMsg(c.onEventChannelChatMessage, *event, message)
 	case *EventChannelChatMessageDelete:
-		callFunc(c.onEventChannelChatMessageDelete, *event)
+		callFuncWithMsg(c.onEventChannelChatMessageDelete, *event, message)
 	case *EventChannelChatNotification:
-		callFunc(c.onEventChannelChatNotification, *event)
+		callFuncWithMsg(c.onEventChannelChatNotification, *event, message)
 	case *EventChannelChatSettingsUpdate:
-		callFunc(c.onEventChannelChatSettingsUpdate, *event)
+		callFuncWithMsg(c.onEventChannelChatSettingsUpdate, *event, message)
 	case *EventChannelSuspiciousUserMessage:
-		callFunc(c.onEventChannelSuspiciousUserMessage, *event)
+		callFuncWithMsg(c.onEventChannelSuspiciousUserMessage, *event, message)
 	case *EventChannelSuspiciousUserUpdate:
-		callFunc(c.onEventChannelSuspiciousUserUpdate, *event)
+		callFuncWithMsg(c.onEventChannelSuspiciousUserUpdate, *event, message)
 	case *EventChannelSharedChatBegin:
-		callFunc(c.onEventChannelSharedChatBegin, *event)
+		callFuncWithMsg(c.onEventChannelSharedChatBegin, *event, message)
 	case *EventChannelSharedChatUpdate:
-		callFunc(c.onEventChannelSharedChatUpdate, *event)
+		callFuncWithMsg(c.onEventChannelSharedChatUpdate, *event, message)
 	case *EventChannelSharedChatEnd:
-		callFunc(c.onEventChannelSharedChatEnd, *event)
+		callFuncWithMsg(c.onEventChannelSharedChatEnd, *event, message)
 	case *EventUserWhisperMessage:
-		callFunc(c.onEventUserWhisperMessage, *event)
+		callFuncWithMsg(c.onEventUserWhisperMessage, *event, message)
 	case *EventChannelAdBreakBegin:
-		callFunc(c.onEventChannelAdBreakBegin, *event)
+		callFuncWithMsg(c.onEventChannelAdBreakBegin, *event, message)
 	case *EventChannelWarningAcknowledge:
-		callFunc(c.onEventChannelWarningAcknowledge, *event)
+		callFuncWithMsg(c.onEventChannelWarningAcknowledge, *event, message)
 	case *EventChannelWarningSend:
-		callFunc(c.onEventChannelWarningSend, *event)
+		callFuncWithMsg(c.onEventChannelWarningSend, *event, message)
 	case *EventChannelUnbanRequestCreate:
-		callFunc(c.onEventChannelUnbanRequestCreate, *event)
+		callFuncWithMsg(c.onEventChannelUnbanRequestCreate, *event, message)
 	case *EventChannelUnbanRequestResolve:
-		callFunc(c.onEventChannelUnbanRequestResolve, *event)
+		callFuncWithMsg(c.onEventChannelUnbanRequestResolve, *event, message)
 	case *EventConduitShardDisabled:
-		callFunc(c.onEventConduitShardDisabled, *event)
+		callFuncWithMsg(c.onEventConduitShardDisabled, *event, message)
 	default:
 		c.onError(fmt.Errorf("unknown event type %s", subscription.Type))
 	}
@@ -528,294 +534,294 @@ func (c *Client) OnRawEvent(callback func(event string, metadata MessageMetadata
 	c.onRawEvent = callback
 }
 
-func (c *Client) OnEventChannelUpdate(callback func(event EventChannelUpdate)) {
+func (c *Client) OnEventChannelUpdate(callback func(event EventChannelUpdate, msg NotificationMessage)) {
 	c.onEventChannelUpdate = callback
 }
 
-func (c *Client) OnEventChannelFollow(callback func(event EventChannelFollow)) {
+func (c *Client) OnEventChannelFollow(callback func(event EventChannelFollow, msg NotificationMessage)) {
 	c.onEventChannelFollow = callback
 }
 
-func (c *Client) OnEventChannelSubscribe(callback func(event EventChannelSubscribe)) {
+func (c *Client) OnEventChannelSubscribe(callback func(event EventChannelSubscribe, msg NotificationMessage)) {
 	c.onEventChannelSubscribe = callback
 }
 
-func (c *Client) OnEventChannelSubscriptionEnd(callback func(event EventChannelSubscriptionEnd)) {
+func (c *Client) OnEventChannelSubscriptionEnd(callback func(event EventChannelSubscriptionEnd, msg NotificationMessage)) {
 	c.onEventChannelSubscriptionEnd = callback
 }
 
-func (c *Client) OnEventChannelSubscriptionGift(callback func(event EventChannelSubscriptionGift)) {
+func (c *Client) OnEventChannelSubscriptionGift(callback func(event EventChannelSubscriptionGift, msg NotificationMessage)) {
 	c.onEventChannelSubscriptionGift = callback
 }
 
-func (c *Client) OnEventChannelSubscriptionMessage(callback func(event EventChannelSubscriptionMessage)) {
+func (c *Client) OnEventChannelSubscriptionMessage(callback func(event EventChannelSubscriptionMessage, msg NotificationMessage)) {
 	c.onEventChannelSubscriptionMessage = callback
 }
 
-func (c *Client) OnEventChannelCheer(callback func(event EventChannelCheer)) {
+func (c *Client) OnEventChannelCheer(callback func(event EventChannelCheer, msg NotificationMessage)) {
 	c.onEventChannelCheer = callback
 }
 
-func (c *Client) OnEventChannelRaid(callback func(event EventChannelRaid)) {
+func (c *Client) OnEventChannelRaid(callback func(event EventChannelRaid, msg NotificationMessage)) {
 	c.onEventChannelRaid = callback
 }
 
-func (c *Client) OnEventChannelBan(callback func(event EventChannelBan)) {
+func (c *Client) OnEventChannelBan(callback func(event EventChannelBan, msg NotificationMessage)) {
 	c.onEventChannelBan = callback
 }
 
-func (c *Client) OnEventChannelUnban(callback func(event EventChannelUnban)) {
+func (c *Client) OnEventChannelUnban(callback func(event EventChannelUnban, msg NotificationMessage)) {
 	c.onEventChannelUnban = callback
 }
 
-func (c *Client) OnEventChannelModeratorAdd(callback func(event EventChannelModeratorAdd)) {
+func (c *Client) OnEventChannelModeratorAdd(callback func(event EventChannelModeratorAdd, msg NotificationMessage)) {
 	c.onEventChannelModeratorAdd = callback
 }
 
-func (c *Client) OnEventChannelModeratorRemove(callback func(event EventChannelModeratorRemove)) {
+func (c *Client) OnEventChannelModeratorRemove(callback func(event EventChannelModeratorRemove, msg NotificationMessage)) {
 	c.onEventChannelModeratorRemove = callback
 }
 
-func (c *Client) OnEventChannelVIPAdd(callback func(event EventChannelVIPAdd)) {
+func (c *Client) OnEventChannelVIPAdd(callback func(event EventChannelVIPAdd, msg NotificationMessage)) {
 	c.onEventChannelVIPAdd = callback
 }
 
-func (c *Client) OnEventChannelVIPRemove(callback func(event EventChannelVIPRemove)) {
+func (c *Client) OnEventChannelVIPRemove(callback func(event EventChannelVIPRemove, msg NotificationMessage)) {
 	c.onEventChannelVIPRemove = callback
 }
 
-func (c *Client) OnEventChannelChannelPointsCustomRewardAdd(callback func(event EventChannelChannelPointsCustomRewardAdd)) {
+func (c *Client) OnEventChannelChannelPointsCustomRewardAdd(callback func(event EventChannelChannelPointsCustomRewardAdd, msg NotificationMessage)) {
 	c.onEventChannelChannelPointsCustomRewardAdd = callback
 }
 
-func (c *Client) OnEventChannelChannelPointsCustomRewardUpdate(callback func(event EventChannelChannelPointsCustomRewardUpdate)) {
+func (c *Client) OnEventChannelChannelPointsCustomRewardUpdate(callback func(event EventChannelChannelPointsCustomRewardUpdate, msg NotificationMessage)) {
 	c.onEventChannelChannelPointsCustomRewardUpdate = callback
 }
 
-func (c *Client) OnEventChannelChannelPointsCustomRewardRemove(callback func(event EventChannelChannelPointsCustomRewardRemove)) {
+func (c *Client) OnEventChannelChannelPointsCustomRewardRemove(callback func(event EventChannelChannelPointsCustomRewardRemove, msg NotificationMessage)) {
 	c.onEventChannelChannelPointsCustomRewardRemove = callback
 }
 
-func (c *Client) OnEventChannelChannelPointsCustomRewardRedemptionAdd(callback func(event EventChannelChannelPointsCustomRewardRedemptionAdd)) {
+func (c *Client) OnEventChannelChannelPointsCustomRewardRedemptionAdd(callback func(event EventChannelChannelPointsCustomRewardRedemptionAdd, msg NotificationMessage)) {
 	c.onEventChannelChannelPointsCustomRewardRedemptionAdd = callback
 }
 
-func (c *Client) OnEventChannelChannelPointsCustomRewardRedemptionUpdate(callback func(event EventChannelChannelPointsCustomRewardRedemptionUpdate)) {
+func (c *Client) OnEventChannelChannelPointsCustomRewardRedemptionUpdate(callback func(event EventChannelChannelPointsCustomRewardRedemptionUpdate, msg NotificationMessage)) {
 	c.onEventChannelChannelPointsCustomRewardRedemptionUpdate = callback
 }
 
-func (c *Client) OnEventChannelChannelPointsAutomaticRewardRedemptionAdd(callback func(event EventChannelChannelPointsAutomaticRewardRedemptionAdd)) {
+func (c *Client) OnEventChannelChannelPointsAutomaticRewardRedemptionAdd(callback func(event EventChannelChannelPointsAutomaticRewardRedemptionAdd, msg NotificationMessage)) {
 	c.onEventChannelChannelPointsAutomaticRewardRedemptionAdd = callback
 }
 
-func (c *Client) OnEventChannelPollBegin(callback func(event EventChannelPollBegin)) {
+func (c *Client) OnEventChannelPollBegin(callback func(event EventChannelPollBegin, msg NotificationMessage)) {
 	c.onEventChannelPollBegin = callback
 }
 
-func (c *Client) OnEventChannelPollProgress(callback func(event EventChannelPollProgress)) {
+func (c *Client) OnEventChannelPollProgress(callback func(event EventChannelPollProgress, msg NotificationMessage)) {
 	c.onEventChannelPollProgress = callback
 }
 
-func (c *Client) OnEventChannelPollEnd(callback func(event EventChannelPollEnd)) {
+func (c *Client) OnEventChannelPollEnd(callback func(event EventChannelPollEnd, msg NotificationMessage)) {
 	c.onEventChannelPollEnd = callback
 }
 
-func (c *Client) OnEventChannelPredictionBegin(callback func(event EventChannelPredictionBegin)) {
+func (c *Client) OnEventChannelPredictionBegin(callback func(event EventChannelPredictionBegin, msg NotificationMessage)) {
 	c.onEventChannelPredictionBegin = callback
 }
 
-func (c *Client) OnEventChannelPredictionProgress(callback func(event EventChannelPredictionProgress)) {
+func (c *Client) OnEventChannelPredictionProgress(callback func(event EventChannelPredictionProgress, msg NotificationMessage)) {
 	c.onEventChannelPredictionProgress = callback
 }
 
-func (c *Client) OnEventChannelPredictionLock(callback func(event EventChannelPredictionLock)) {
+func (c *Client) OnEventChannelPredictionLock(callback func(event EventChannelPredictionLock, msg NotificationMessage)) {
 	c.onEventChannelPredictionLock = callback
 }
 
-func (c *Client) OnEventChannelPredictionEnd(callback func(event EventChannelPredictionEnd)) {
+func (c *Client) OnEventChannelPredictionEnd(callback func(event EventChannelPredictionEnd, msg NotificationMessage)) {
 	c.onEventChannelPredictionEnd = callback
 }
 
-func (c *Client) OnEventDropEntitlementGrant(callback func(event []EventDropEntitlementGrant)) {
+func (c *Client) OnEventDropEntitlementGrant(callback func(event []EventDropEntitlementGrant, msg NotificationMessage)) {
 	c.onEventDropEntitlementGrant = callback
 }
 
-func (c *Client) OnEventExtensionBitsTransactionCreate(callback func(event EventExtensionBitsTransactionCreate)) {
+func (c *Client) OnEventExtensionBitsTransactionCreate(callback func(event EventExtensionBitsTransactionCreate, msg NotificationMessage)) {
 	c.onEventExtensionBitsTransactionCreate = callback
 }
 
-func (c *Client) OnEventChannelGoalBegin(callback func(event EventChannelGoalBegin)) {
+func (c *Client) OnEventChannelGoalBegin(callback func(event EventChannelGoalBegin, msg NotificationMessage)) {
 	c.onEventChannelGoalBegin = callback
 }
 
-func (c *Client) OnEventChannelGoalProgress(callback func(event EventChannelGoalProgress)) {
+func (c *Client) OnEventChannelGoalProgress(callback func(event EventChannelGoalProgress, msg NotificationMessage)) {
 	c.onEventChannelGoalProgress = callback
 }
 
-func (c *Client) OnEventChannelGoalEnd(callback func(event EventChannelGoalEnd)) {
+func (c *Client) OnEventChannelGoalEnd(callback func(event EventChannelGoalEnd, msg NotificationMessage)) {
 	c.onEventChannelGoalEnd = callback
 }
 
-func (c *Client) OnEventChannelHypeTrainBegin(callback func(event EventChannelHypeTrainBegin)) {
+func (c *Client) OnEventChannelHypeTrainBegin(callback func(event EventChannelHypeTrainBegin, msg NotificationMessage)) {
 	c.onEventChannelHypeTrainBegin = callback
 }
 
-func (c *Client) OnEventChannelHypeTrainProgress(callback func(event EventChannelHypeTrainProgress)) {
+func (c *Client) OnEventChannelHypeTrainProgress(callback func(event EventChannelHypeTrainProgress, msg NotificationMessage)) {
 	c.onEventChannelHypeTrainProgress = callback
 }
 
-func (c *Client) OnEventChannelHypeTrainEnd(callback func(event EventChannelHypeTrainEnd)) {
+func (c *Client) OnEventChannelHypeTrainEnd(callback func(event EventChannelHypeTrainEnd, msg NotificationMessage)) {
 	c.onEventChannelHypeTrainEnd = callback
 }
 
-func (c *Client) OnEventStreamOnline(callback func(event EventStreamOnline)) {
+func (c *Client) OnEventStreamOnline(callback func(event EventStreamOnline, msg NotificationMessage)) {
 	c.onEventStreamOnline = callback
 }
 
-func (c *Client) OnEventStreamOffline(callback func(event EventStreamOffline)) {
+func (c *Client) OnEventStreamOffline(callback func(event EventStreamOffline, msg NotificationMessage)) {
 	c.onEventStreamOffline = callback
 }
 
-func (c *Client) OnEventUserAuthorizationGrant(callback func(event EventUserAuthorizationGrant)) {
+func (c *Client) OnEventUserAuthorizationGrant(callback func(event EventUserAuthorizationGrant, msg NotificationMessage)) {
 	c.onEventUserAuthorizationGrant = callback
 }
 
-func (c *Client) OnEventUserAuthorizationRevoke(callback func(event EventUserAuthorizationRevoke)) {
+func (c *Client) OnEventUserAuthorizationRevoke(callback func(event EventUserAuthorizationRevoke, msg NotificationMessage)) {
 	c.onEventUserAuthorizationRevoke = callback
 }
 
-func (c *Client) OnEventUserUpdate(callback func(event EventUserUpdate)) {
+func (c *Client) OnEventUserUpdate(callback func(event EventUserUpdate, msg NotificationMessage)) {
 	c.onEventUserUpdate = callback
 }
 
-func (c *Client) OnEventChannelCharityCampaignDonate(callback func(event EventChannelCharityCampaignDonate)) {
+func (c *Client) OnEventChannelCharityCampaignDonate(callback func(event EventChannelCharityCampaignDonate, msg NotificationMessage)) {
 	c.onEventChannelCharityCampaignDonate = callback
 }
 
-func (c *Client) OnEventChannelCharityCampaignProgress(callback func(event EventChannelCharityCampaignProgress)) {
+func (c *Client) OnEventChannelCharityCampaignProgress(callback func(event EventChannelCharityCampaignProgress, msg NotificationMessage)) {
 	c.onEventChannelCharityCampaignProgress = callback
 }
 
-func (c *Client) OnEventChannelCharityCampaignStart(callback func(event EventChannelCharityCampaignStart)) {
+func (c *Client) OnEventChannelCharityCampaignStart(callback func(event EventChannelCharityCampaignStart, msg NotificationMessage)) {
 	c.onEventChannelCharityCampaignStart = callback
 }
 
-func (c *Client) OnEventChannelCharityCampaignStop(callback func(event EventChannelCharityCampaignStop)) {
+func (c *Client) OnEventChannelCharityCampaignStop(callback func(event EventChannelCharityCampaignStop, msg NotificationMessage)) {
 	c.onEventChannelCharityCampaignStop = callback
 }
 
-func (c *Client) OnEventChannelShieldModeBegin(callback func(event EventChannelShieldModeBegin)) {
+func (c *Client) OnEventChannelShieldModeBegin(callback func(event EventChannelShieldModeBegin, msg NotificationMessage)) {
 	c.onEventChannelShieldModeBegin = callback
 }
 
-func (c *Client) OnEventChannelShieldModeEnd(callback func(event EventChannelShieldModeEnd)) {
+func (c *Client) OnEventChannelShieldModeEnd(callback func(event EventChannelShieldModeEnd, msg NotificationMessage)) {
 	c.onEventChannelShieldModeEnd = callback
 }
 
-func (c *Client) OnEventChannelShoutoutCreate(callback func(event EventChannelShoutoutCreate)) {
+func (c *Client) OnEventChannelShoutoutCreate(callback func(event EventChannelShoutoutCreate, msg NotificationMessage)) {
 	c.onEventChannelShoutoutCreate = callback
 }
 
-func (c *Client) OnEventChannelShoutoutReceive(callback func(event EventChannelShoutoutReceive)) {
+func (c *Client) OnEventChannelShoutoutReceive(callback func(event EventChannelShoutoutReceive, msg NotificationMessage)) {
 	c.onEventChannelShoutoutReceive = callback
 }
 
-func (c *Client) OnEventChannelModerate(callback func(event EventChannelModerate)) {
+func (c *Client) OnEventChannelModerate(callback func(event EventChannelModerate, msg NotificationMessage)) {
 	c.onEventChannelModerate = callback
 }
 
-func (c *Client) OnEventAutomodMessageHold(callback func(event EventAutomodMessageHold)) {
+func (c *Client) OnEventAutomodMessageHold(callback func(event EventAutomodMessageHold, msg NotificationMessage)) {
 	c.onEventAutomodMessageHold = callback
 }
 
-func (c *Client) OnEventAutomodMessageUpdate(callback func(event EventAutomodMessageUpdate)) {
+func (c *Client) OnEventAutomodMessageUpdate(callback func(event EventAutomodMessageUpdate, msg NotificationMessage)) {
 	c.onEventAutomodMessageUpdate = callback
 }
 
-func (c *Client) OnEventAutomodSettingsUpdate(callback func(event EventAutomodSettingsUpdate)) {
+func (c *Client) OnEventAutomodSettingsUpdate(callback func(event EventAutomodSettingsUpdate, msg NotificationMessage)) {
 	c.onEventAutomodSettingsUpdate = callback
 }
 
-func (c *Client) OnEventAutomodTermsUpdate(callback func(event EventAutomodTermsUpdate)) {
+func (c *Client) OnEventAutomodTermsUpdate(callback func(event EventAutomodTermsUpdate, msg NotificationMessage)) {
 	c.onEventAutomodTermsUpdate = callback
 }
 
-func (c *Client) OnEventChannelChatUserMessageHold(callback func(event EventChannelChatUserMessageHold)) {
+func (c *Client) OnEventChannelChatUserMessageHold(callback func(event EventChannelChatUserMessageHold, msg NotificationMessage)) {
 	c.onEventChannelChatUserMessageHold = callback
 }
 
-func (c *Client) OnEventChannelChatUserMessageUpdate(callback func(event EventChannelChatUserMessageUpdate)) {
+func (c *Client) OnEventChannelChatUserMessageUpdate(callback func(event EventChannelChatUserMessageUpdate, msg NotificationMessage)) {
 	c.onEventChannelChatUserMessageUpdate = callback
 }
 
-func (c *Client) OnEventChannelChatClear(callback func(event EventChannelChatClear)) {
+func (c *Client) OnEventChannelChatClear(callback func(event EventChannelChatClear, msg NotificationMessage)) {
 	c.onEventChannelChatClear = callback
 }
 
-func (c *Client) OnEventChannelChatClearUserMessages(callback func(event EventChannelChatClearUserMessages)) {
+func (c *Client) OnEventChannelChatClearUserMessages(callback func(event EventChannelChatClearUserMessages, msg NotificationMessage)) {
 	c.onEventChannelChatClearUserMessages = callback
 }
 
-func (c *Client) OnEventChannelChatMessage(callback func(event EventChannelChatMessage)) {
+func (c *Client) OnEventChannelChatMessage(callback func(event EventChannelChatMessage, msg NotificationMessage)) {
 	c.onEventChannelChatMessage = callback
 }
 
-func (c *Client) OnEventChannelChatMessageDelete(callback func(event EventChannelChatMessageDelete)) {
+func (c *Client) OnEventChannelChatMessageDelete(callback func(event EventChannelChatMessageDelete, msg NotificationMessage)) {
 	c.onEventChannelChatMessageDelete = callback
 }
 
-func (c *Client) OnEventChannelChatNotification(callback func(event EventChannelChatNotification)) {
+func (c *Client) OnEventChannelChatNotification(callback func(event EventChannelChatNotification, msg NotificationMessage)) {
 	c.onEventChannelChatNotification = callback
 }
 
-func (c *Client) OnEventChannelChatSettingsUpdate(callback func(event EventChannelChatSettingsUpdate)) {
+func (c *Client) OnEventChannelChatSettingsUpdate(callback func(event EventChannelChatSettingsUpdate, msg NotificationMessage)) {
 	c.onEventChannelChatSettingsUpdate = callback
 }
 
-func (c *Client) OnEventChannelSuspiciousUserMessage(callback func(event EventChannelSuspiciousUserMessage)) {
+func (c *Client) OnEventChannelSuspiciousUserMessage(callback func(event EventChannelSuspiciousUserMessage, msg NotificationMessage)) {
 	c.onEventChannelSuspiciousUserMessage = callback
 }
 
-func (c *Client) OnEventChannelSuspiciousUserUpdate(callback func(event EventChannelSuspiciousUserUpdate)) {
+func (c *Client) OnEventChannelSuspiciousUserUpdate(callback func(event EventChannelSuspiciousUserUpdate, msg NotificationMessage)) {
 	c.onEventChannelSuspiciousUserUpdate = callback
 }
 
-func (c *Client) OnEventChannelSharedChatBegin(callback func(event EventChannelSharedChatBegin)) {
+func (c *Client) OnEventChannelSharedChatBegin(callback func(event EventChannelSharedChatBegin, msg NotificationMessage)) {
 	c.onEventChannelSharedChatBegin = callback
 }
 
-func (c *Client) OnEventChannelSharedChatUpdate(callback func(event EventChannelSharedChatUpdate)) {
+func (c *Client) OnEventChannelSharedChatUpdate(callback func(event EventChannelSharedChatUpdate, msg NotificationMessage)) {
 	c.onEventChannelSharedChatUpdate = callback
 }
 
-func (c *Client) OnEventChannelSharedChatEnd(callback func(event EventChannelSharedChatEnd)) {
+func (c *Client) OnEventChannelSharedChatEnd(callback func(event EventChannelSharedChatEnd, msg NotificationMessage)) {
 	c.onEventChannelSharedChatEnd = callback
 }
 
-func (c *Client) OnEventUserWhisperMessage(callback func(event EventUserWhisperMessage)) {
+func (c *Client) OnEventUserWhisperMessage(callback func(event EventUserWhisperMessage, msg NotificationMessage)) {
 	c.onEventUserWhisperMessage = callback
 }
 
-func (c *Client) OnEventChannelAdBreakBegin(callback func(event EventChannelAdBreakBegin)) {
+func (c *Client) OnEventChannelAdBreakBegin(callback func(event EventChannelAdBreakBegin, msg NotificationMessage)) {
 	c.onEventChannelAdBreakBegin = callback
 }
 
-func (c *Client) OnEventChannelWarningAcknowledge(callback func(event EventChannelWarningAcknowledge)) {
+func (c *Client) OnEventChannelWarningAcknowledge(callback func(event EventChannelWarningAcknowledge, msg NotificationMessage)) {
 	c.onEventChannelWarningAcknowledge = callback
 }
 
-func (c *Client) OnEventChannelWarningSend(callback func(event EventChannelWarningSend)) {
+func (c *Client) OnEventChannelWarningSend(callback func(event EventChannelWarningSend, msg NotificationMessage)) {
 	c.onEventChannelWarningSend = callback
 }
 
-func (c *Client) OnEventChannelUnbanRequestCreate(callback func(event EventChannelUnbanRequestCreate)) {
+func (c *Client) OnEventChannelUnbanRequestCreate(callback func(event EventChannelUnbanRequestCreate, msg NotificationMessage)) {
 	c.onEventChannelUnbanRequestCreate = callback
 }
 
-func (c *Client) OnEventChannelUnbanRequestResolve(callback func(event EventChannelUnbanRequestResolve)) {
+func (c *Client) OnEventChannelUnbanRequestResolve(callback func(event EventChannelUnbanRequestResolve, msg NotificationMessage)) {
 	c.onEventChannelUnbanRequestResolve = callback
 }
 
-func (c *Client) OnEventConduitShardDisabled(callback func(event EventConduitShardDisabled)) {
+func (c *Client) OnEventConduitShardDisabled(callback func(event EventConduitShardDisabled, msg NotificationMessage)) {
 	c.onEventConduitShardDisabled = callback
 }
